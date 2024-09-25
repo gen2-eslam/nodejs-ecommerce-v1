@@ -1,4 +1,5 @@
 const slugify = require('slugify');
+const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const CategoryModel = require('../model/categoryModel');
 
@@ -23,7 +24,28 @@ exports.getCategories = asyncHandler(async (req, res) => {
 })
 
 //@desc Get soacifc category by id
-// @route GET  
+// @route GET  /api/v1/categories/:id
+// @access Public
+exports.getCategotyById = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  if(!mongoose.Types.ObjectId.isValid(id)){
+    res.status(404).json({
+      message: `category not found with this id: ${id}`,
+    });
+  }else {
+    const category = await CategoryModel.findById(id);
+    if(!category ){
+      res.status(404).json({
+        message: `category not found with this id: ${id}`,
+      });
+    }
+      res.status(200).json({
+        data: category,
+      });
+    
+  }
+
+});
 //@desc Create Category
 //@route POST /api/v1/categories
 //@access Private
